@@ -19,7 +19,7 @@ $klein->respond('GET', '/library/lend-avl-cover', function ($request, $response)
   $dataObj = json_decode($data);
   $imgURL = $dataObj->image;
 
-  if (strpos($imgURL, 'nobook.jpg') !== false) {
+  if (!$imgURL || strpos($imgURL, 'nobook.jpg') !== false) {
     $imgURL = false;
   } else {
     $imgURL = preg_replace("/http:\/\/img\d\.(doubanio.com\/.*)/", "http://img1.$1", $imgURL);
