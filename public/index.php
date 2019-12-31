@@ -12,6 +12,15 @@ $klein = new \Klein\Klein();
 $klein->respond('GET', '/library/lend-avl-cover', function ($request, $response) {
   $marcNo = $request->param('marcNo');
   $isbn = $request->param('isbn');
+
+  $response->header('Access-Control-Allow-Origin', '*');
+  if (!$marcNo && !$isbn) {
+    $response->json([
+      'error' => true,
+      'msg' => 'params error',
+    ]);
+    return;
+  }
   $url = "http://202.116.41.246:8080/opac/ajax_isbn_marc_no.php?marc_no=$marcNo&isbn=$isbn";
 
   // fetch
@@ -56,6 +65,8 @@ $klein->respond('GET', '/library/search', function ($request, $response) {
   $pageSize = $request->param('pageSize', 10);
   $pageCount = $request->param('pageCount', 1);
 
+  $response->header('Access-Control-Allow-Origin', '*');
+
   if (!$keywords) {
     $response->json([
       'error' => true,
@@ -94,7 +105,6 @@ $klein->respond('GET', '/library/search', function ($request, $response) {
     GuzzleHttp\RequestOptions::JSON => $paramObj,
   ]);
 
-  $response->header('Access-Control-Allow-Origin', '*');
   $response->json(json_decode((string) $res->getBody()));
 });
 
