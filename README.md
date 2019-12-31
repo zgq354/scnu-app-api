@@ -1,5 +1,3 @@
-# douban-img-proxy
+# scnu-app-api
 
-通过 ISBN 从豆瓣获取书籍封面图
-
-URL 格式: http://localhost:8088/cover/[isbn].jpg
+scnu.app 用到的各种接口

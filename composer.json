@@ -1,0 +1,16 @@
+{
+    "name": "zgq354/scnu-app-api",
+    "description": "API for scnu.app",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "zgq354",
+            "email": "zgq354@gmail.com"
+        }
+    ],
+    "require": {
+        "klein/klein": "^2.1",
+        "guzzlehttp/guzzle": "~6.0"
+    }
+}

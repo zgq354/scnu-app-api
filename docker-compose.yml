@@ -10,4 +10,4 @@ services:
     ports:
       - 8088:8081
     volumes:
-      - ./cover:/var/www/html/cover
+      - ./cover:/var/www/html/public/cover
