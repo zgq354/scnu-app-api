@@ -3,6 +3,7 @@
 define('BASE_URL', 'https://scnuapp.tql.today');
 
 require __DIR__ . '/../vendor/autoload.php';
+require __DIR__ . '/../lib/db.php';
 
 $klein = new \Klein\Klein();
 
@@ -37,8 +38,19 @@ $klein->respond('GET', '/library/lend-avl-cover', function ($request, $response)
 
     // cache
     $filepath = __DIR__ . '/cover/' . $filename;
-    if (!file_exists($filepath)) {
-      file_put_contents($filepath, file_get_contents($imgURL));
+    $res = DB::get('SELECT * FROM `book` WHERE `isbn` = ?', [$isbn]);
+
+    if (!$res && !file_exists($filepath)) {
+      $content = @file_get_contents($imgURL);
+      if ($content) {
+        file_put_contents($filepath, $content);
+        DB::run('INSERT INTO `book` (`marc_no`, `isbn`, `cover_url`, `cover_filename`) VALUES (?, ?, ?, ?)', [
+          $marcNo,
+          $isbn,
+          $imgURL,
+          $filename,
+        ]);
+      }
     }
     $imgURL = BASE_URL . '/cover/' . $filename;
   }
@@ -105,7 +117,17 @@ $klein->respond('GET', '/library/search', function ($request, $response) {
     GuzzleHttp\RequestOptions::JSON => $paramObj,
   ]);
 
-  $response->json(json_decode((string) $res->getBody()));
+  $body = json_decode((string) $res->getBody());
+  if ($body->content) {
+    $body->content = array_map(function ($item) {
+      $record = DB::get('SELECT * FROM `book` WHERE `isbn` = ?', [$item->isbn]);
+      $imgURL = BASE_URL . '/cover/' . $record['cover_filename'];
+      $item->coverImg = $record ? $imgURL : false;
+      return $item;
+    }, $body->content);
+  }
+
+  $response->json($body);
 });
 
 $klein->dispatch();
