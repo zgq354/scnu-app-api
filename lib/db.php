@@ -39,3 +39,14 @@ class DB
 }
 
 DB::init();
+
+if (!file_exists(__DIR__ . '/../install.lock')) {
+  DB::exec('CREATE TABLE IF NOT EXISTS "book" (
+    "id"	INTEGER PRIMARY KEY AUTOINCREMENT,
+    "marc_no"	TEXT,
+    "isbn"	TEXT,
+    "cover_url"	TEXT,
+    "cover_filename"	TEXT
+  )');
+  touch(__DIR__. '/../install.lock');
+}
